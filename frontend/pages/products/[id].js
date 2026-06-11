@@ -8,6 +8,18 @@ import { adicionarAoCarrinho } from '../../lib/carrinho'
 const EMOJI_MAP = { 1: '💻', 2: '📚', 3: '🎮', 4: '🏠' }
 const CATEGORY_COLORS = { 1: '#e8f4fd', 2: '#fdf6e8', 3: '#edf8ee', 4: '#fdeef8' }
 
+// Retorna o caminho da imagem do produto
+const getProductImage = (product) => {
+  if (product?.IMAGEM) return `/images/${product.IMAGEM}`
+  const fallback = {
+    1: '/images/monitor_24.jpg',
+    2: '/images/livro_cleancode.jpg',
+    3: '/images/console_1tb.jpg',
+    4: '/images/luminaria.jpg',
+  }
+  return fallback[product?.CATEGORY_ID] || '/images/quadro_abstrato.jpg'
+}
+
 export default function ProductDetail() {
   const router = useRouter()
   const { id } = router.query
@@ -99,19 +111,20 @@ export default function ProductDetail() {
               height: '360px',
               backgroundColor: CATEGORY_COLORS[product?.CATEGORY_ID] || '#f5f5f5',
               border: '1px solid #eee', borderRadius: '12px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '120px', marginBottom: '16px',
+              overflow: 'hidden', marginBottom: '16px',
             }}>
-              {EMOJI_MAP[product?.CATEGORY_ID] || '📦'}
+              <img
+                src={getProductImage(product)}
+                alt={product?.NAME || 'Produto'}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
             </div>
 
             {/* Miniaturas */}
             <div style={{ display: 'flex', gap: '8px' }}>
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} style={{ width: '72px', height: '72px', backgroundColor: '#f9f9f9', border: '1px solid #eee', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', cursor: 'pointer' }}>
-                  {EMOJI_MAP[product?.CATEGORY_ID] || '📦'}
-                </div>
-              ))}
+              <div style={{ width: '72px', height: '72px', border: '2px solid #ff6600', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer' }}>
+                <img src={getProductImage(product)} alt={product?.NAME || 'Produto'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
             </div>
           </div>
 

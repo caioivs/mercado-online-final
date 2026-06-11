@@ -11,6 +11,19 @@ const EMOJI_MAP = {
   4: '🏠',
 }
 
+// Retorna o caminho da imagem do produto
+
+const getProductImage = (product) => {
+  if (product?.IMAGEM) return `/images/${product.IMAGEM}`
+  const fallback = {
+    1: '/images/monitor_24.jpg',
+    2: '/images/livro_cleancode.jpg',
+    3: '/images/console_1tb.jpg',
+    4: '/images/luminaria.jpg',
+  }
+  return fallback[product?.CATEGORY_ID] || '/images/quadro_abstrato.jpg'
+}
+
 const CATEGORY_COLORS = {
   1: '#e8f4fd',
   2: '#fdf6e8',
@@ -228,10 +241,13 @@ export default function ProductsIndex() {
                   <div style={{
                     height: '180px',
                     backgroundColor: CATEGORY_COLORS[p.CATEGORY_ID] || '#f5f5f5',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '64px',
+                    overflow: 'hidden',
                   }}>
-                    {EMOJI_MAP[p.CATEGORY_ID] || '📦'}
+                    <img
+                      src={getProductImage(p)}
+                      alt={p.NAME}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    />
                   </div>
                 </a>
 

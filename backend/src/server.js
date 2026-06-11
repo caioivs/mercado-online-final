@@ -129,14 +129,14 @@ app.delete('/api/categories/:id', wrap(async (req, res) => {
 }));
 
 app.get('/api/products', wrap(async (_, res) => {
-  const result = await query('SELECT p.id, p.category_id, p.name, p.price, p.stock, c.name AS category_name FROM products p JOIN categories c ON c.id = p.category_id ORDER BY p.id');
+  const result = await query('SELECT p.id, p.category_id, p.name, p.price, p.stock, p.imagem, c.name AS category_name FROM products p JOIN categories c ON c.id = p.category_id ORDER BY p.id');
   res.json(result.rows);
 }));
 
 app.get('/api/products/:id', wrap(async (req, res) => {
   const sql = dbClient === 'oracle'
-    ? 'SELECT id, category_id, name, price, stock FROM products WHERE id = :1'
-    : 'SELECT id, category_id, name, price, stock FROM products WHERE id = ?';
+    ? 'SELECT id, category_id, name, price, stock, imagem FROM products WHERE id = :1'
+    : 'SELECT id, category_id, name, price, stock, imagem FROM products WHERE id = ?';
   const result = await query(sql, [Number(req.params.id)]);
   const row = result.rows[0];
   if (!row) return res.status(404).json({ ERROR: 'Not found' });
