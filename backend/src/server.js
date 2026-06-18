@@ -176,4 +176,56 @@ app.delete('/api/products/:id', wrap(async (req, res) => {
   res.status(204).send();
 }));
 
+app.post('/api/login', wrap(async (req, res) => {
+  const { email, senha } = req.body;
+
+  const pool = await getMysqlPool();
+
+  const [users] = await pool.query(
+    'SELECT * FROM users WHERE email = ? AND senha = ?',
+    [email, senha]
+  );
+
+  if (users.length === 0) {
+    return res.status(401).json({
+      ERROR: 'Credenciais inválidas'
+    });
+  }
+
+  res.json({
+    SUCCESS: true,
+    USER: {
+      id: users[0].id,
+      nome: users[0].nome,
+      email: users[0].email
+    }
+  });
+}));
+
+app.post('/api/register', wrap(async (req, res) => {
+  const { nome, email, senha } = req.body;
+
+  const pool = await getMysqlPool();
+
+  const [existente] = await pool.query(
+    'SELECT id FROM users WHERE email = ?',
+    [email]
+  );
+
+  if (existente.length > 0) {
+    return res.status(400).json({
+      ERROR: 'E-mail já cadastrado'
+    });
+  }
+
+  await pool.query(
+    'INSERT INTO users(nome, email, senha) VALUES (?, ?, ?)',
+    [nome, email, senha]
+  );
+
+  res.json({
+    SUCCESS: true
+  });
+}));
+
 app.listen(port, '0.0.0.0', () => console.log(`Backend Node rodando na porta ${port}`));

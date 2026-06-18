@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { request } from '../lib/api'
 import { adicionarAoCarrinho } from '../lib/carrinho'
@@ -91,7 +92,18 @@ export default function ProductsIndex() {
     }
   }
 
-  useEffect(() => { load() }, [])
+  const router = useRouter()
+
+  useEffect(() => {
+    load()
+  }, [])
+
+  useEffect(() => {
+    if (router.query.search) {
+      setBusca(router.query.search)
+    }
+  }, [router.query.search])
+
 
   const handleAddToCart = (produto) => {
     adicionarAoCarrinho(produto)

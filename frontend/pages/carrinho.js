@@ -5,6 +5,18 @@ import { getCarrinho, removerDoCarrinho, atualizarQuantidade, toggleSelecionado 
 
 const EMOJI_MAP = { 1: '💻', 2: '📚', 3: '🎮', 4: '🏠' }
 
+// Retorna o caminho da imagem do produto (imagem específica ou fallback por categoria)
+const getProductImage = (item) => {
+  if (item?.IMAGEM) return `/images/${item.IMAGEM}`
+  const fallback = {
+    1: '/images/monitor_24.jpg',
+    2: '/images/livro_cleancode.jpg',
+    3: '/images/console_1tb.jpg',
+    4: '/images/luminaria.jpg',
+  }
+  return fallback[item?.CATEGORY_ID] || '/images/quadro_abstrato.jpg'
+}
+
 function Footer() {
   return (
     <footer style={{ borderTop: '1px solid #eee', padding: '40px 24px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', maxWidth: '1200px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
@@ -141,15 +153,26 @@ export default function Carrinho() {
                       style={{ width: '18px', height: '18px', cursor: 'pointer', flexShrink: 0 }}
                     />
 
-                    {/* Emoji imagem */}
+                    {/* Imagem do produto */}
                     <div style={{
                       width: '80px', height: '80px', flexShrink: 0,
                       backgroundColor: '#f5f5f5',
                       border: '1px solid #eee', borderRadius: '8px',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '36px',
+                      overflow: 'hidden',
                     }}>
-                      {EMOJI_MAP[item.CATEGORY_ID] || '📦'}
+                      <img
+                        src={getProductImage(item)}
+                        alt={item.NAME}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                        onError={e => {
+                          e.currentTarget.style.display = 'none'
+                          e.currentTarget.parentElement.style.display = 'flex'
+                          e.currentTarget.parentElement.style.alignItems = 'center'
+                          e.currentTarget.parentElement.style.justifyContent = 'center'
+                          e.currentTarget.parentElement.style.fontSize = '36px'
+                          e.currentTarget.parentElement.innerHTML = EMOJI_MAP[item.CATEGORY_ID] || '📦'
+                        }}
+                      />
                     </div>
 
                     {/* Nome + Controle de quantidade */}

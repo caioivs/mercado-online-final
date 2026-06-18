@@ -9,17 +9,39 @@ export default function Login() {
   const [message, setMessage] = useState('')
 
   const handleLogin = async () => {
-    try {
-      // Exemplo de integração. Descomente quando o back-end estiver pronto.
-      // const response = await request('/login', { method: 'POST', body: JSON.stringify(form) })
-      // Se usar token (JWT), você pode salvá-lo aqui: localStorage.setItem('token', response.token)
-      // window.location.href = '/' // Redireciona para a home após o login
-      
-      setMessage('Login realizado com sucesso! (Simulação)')
-    } catch (error) {
-      setMessage(error.message || 'E-mail ou senha incorretos.')
+  try {
+    const response = await fetch(
+      'http://localhost:8000/api/login',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(form)
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.ERROR);
     }
+
+    localStorage.setItem(
+      'usuario',
+      JSON.stringify(data.USER)
+    );
+
+    setMessage('Login realizado com sucesso!');
+
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 1000);
+
+  } catch (err) {
+    setMessage(err.message);
   }
+};
 
   // Estilos reutilizáveis para manter o código limpo
   const inputStyle = {
@@ -85,13 +107,13 @@ export default function Login() {
               style={inputStyle} 
             />
             
-            <input 
-              type="password" 
-              placeholder="Senha..." 
-              value={form.password}
-              onChange={e => setForm({ ...form, password: e.target.value })}
-              style={inputStyle} 
-            />
+            <input
+                type="password"
+                placeholder="Senha..."
+                value={form.senha}
+                onChange={e => setForm({ ...form, senha: e.target.value })}
+                style={inputStyle}
+              />
 
             {/* Esqueci a senha */}
             <div style={{ width: '100%', maxWidth: '300px', textAlign: 'left', paddingLeft: '16px' }}>

@@ -4,13 +4,16 @@ import { request } from '../lib/api'
 import { adicionarAoCarrinho } from '../lib/carrinho'
 import SiteHeader from '../components/SiteHeader'
 
-// Imagens para representar os produtos por categoria
-// Arquivos em: frontend/public/images/
-const IMAGE_BY_CATEGORY_ID = {
-  1: '/images/monitor_24.jpg', // Games/Tecnologia
-  2: '/images/livro_cleancode.jpg', // Livros
-  3: '/images/console_1tb.jpg', // Games
-  4: '/images/luminaria.jpg', // Casa e Decoração
+// Retorna o caminho da imagem do produto (imagem específica ou fallback por categoria)
+const getProductImage = (product) => {
+  if (product?.IMAGEM) return `/images/${product.IMAGEM}`
+  const fallback = {
+    1: '/images/monitor_24.jpg',
+    2: '/images/livro_cleancode.jpg',
+    3: '/images/console_1tb.jpg',
+    4: '/images/luminaria.jpg',
+  }
+  return fallback[product?.CATEGORY_ID] || '/images/quadro_abstrato.jpg'
 }
 
 
@@ -162,8 +165,8 @@ export default function Home() {
                   fontSize: '72px',
                 }}>
                   <img
-                    src={IMAGE_BY_CATEGORY_ID[p.CATEGORY_ID] || '/images/quadro_abstrato.jpg'}
-                    alt={p.CATEGORY_NAME || 'Produto'}
+                    src={getProductImage(p)}
+                    alt={p.NAME || 'Produto'}
                     style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                   />
 
